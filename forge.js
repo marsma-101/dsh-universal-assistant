@@ -1,5 +1,5 @@
 /**
- * dsh-agent-studio/forge — the model-facing agent-creation tools, host half.
+ * dsh-universal-assistant/forge — the model-facing agent-creation tools, host half.
  *
  * This is the half that makes an assistant able to *build a colleague*. The
  * studio package's other half is a UI for editing agents that already exist;
@@ -22,7 +22,7 @@ import { writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { defineTool } from '@deepseek-ai/dsh-tools'
 
-export const name = 'agent-studio-forge'
+export const name = 'universal-assistant-forge'
 
 /** `tools` is needed to publish the tools; `agentPresets` is the roster. */
 export const inject = ['tools']
@@ -215,7 +215,7 @@ export const BUNDLES = {
 	forge: {
 		summary: '自己也能创建智能体（本插件提供的 agent_create 等工具）',
 		yaml: `- id: agent-forge
-  name: 'dsh-agent-studio/forge'
+  name: 'dsh-universal-assistant/forge'
 `,
 	},
 }
@@ -225,7 +225,7 @@ const DEFAULT_BUNDLES = ['files', 'web', 'skills', 'ask', 'todo', 'present']
 
 /** The persona row every generated agent gets: it is what makes the .md files live. */
 const PERSONA_ROW = `- id: persona
-  name: 'dsh-agent-studio/persona'
+  name: 'dsh-universal-assistant/persona'
   config:
     dir: !!js "process.getBuiltinModule('node:url').fileURLToPath(new URL('.', baseUrl))"
 `
@@ -249,7 +249,7 @@ export function renderComposition(bundles, title) {
 		`# ${title}\n#`,
 		'# 人格与工作规则不在这个文件里，在同目录的档案文件：',
 		'#   SOUL.md / AGENT.md / USER.md / MEMORY.md',
-		'# 由 dsh-agent-studio/persona 在每次装配提示词时读取，改 .md 下一轮就生效。',
+		'# 由 dsh-universal-assistant/persona 在每次装配提示词时读取，改 .md 下一轮就生效。',
 		'#',
 		'# 组装约束：发布服务的行必须包进带 `isolate` realm 的 group；',
 		'# 只消费 host 能力、不发布服务的行留在 realm 外，否则解析不到 host 实例。',

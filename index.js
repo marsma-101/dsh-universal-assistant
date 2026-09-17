@@ -1,5 +1,5 @@
 /**
- * dsh-agent-studio — host half.
+ * dsh-universal-assistant — host half.
  *
  * Serves the Agent Studio API over the browser HTTP carrier (`ctx.webServer`).
  * The client half (lib/client.js) mounts a native sidebar entry and a main
@@ -19,13 +19,13 @@ import { readFile, writeFile, readdir, mkdir, stat } from 'node:fs/promises'
 import { dirname, join, resolve, sep } from 'node:path'
 import { BUNDLES, renderComposition } from './forge.js'
 
-export const name = 'agent-studio'
+export const name = 'universal-assistant'
 
 /** The HTTP carrier is a hard dependency: without it there is no surface. */
 export const inject = ['webServer']
 
 /** Single prefix for every endpoint this plugin owns. */
-const ROUTE = '/agent-studio-api'
+const ROUTE = '/universal-assistant-api'
 
 /**
  * Files the settings page may create or overwrite, relative to a preset dir.
@@ -291,7 +291,7 @@ export function apply(ctx) {
         const message = error !== null && typeof error === 'object' && 'message' in error
           ? String(error.message)
           : String(error)
-        ctx.logger?.warn?.(`agent-studio: ${message}`)
+        ctx.logger?.warn?.(`universal-assistant: ${message}`)
         return send(res, 500, { error: message })
       }
     },

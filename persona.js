@@ -1,5 +1,5 @@
 /**
- * dsh-agent-studio/persona — the agent file model, host half.
+ * dsh-universal-assistant/persona — the agent file model, host half.
  *
  * Replaces `@deepseek-ai/dsh-persona` inside an agent preset: instead of
  * inlining the persona text in the composition, it registers the same
@@ -23,7 +23,7 @@
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 
-export const name = 'agent-studio-persona'
+export const name = 'universal-assistant-persona'
 
 /** The prompt registry this row contributes to. */
 export const inject = ['systemPrompt']
@@ -43,7 +43,7 @@ const SUFFIX = 'Your working directory is {{cwd}}.'
 export function apply(ctx, config = {}) {
   const dir = typeof config.dir === 'string' && config.dir !== '' ? config.dir : undefined
   if (dir === undefined) {
-    throw new Error('agent-studio/persona: `dir` is required (the agent preset directory)')
+    throw new Error('universal-assistant/persona: `dir` is required (the agent preset directory)')
   }
 
   /**

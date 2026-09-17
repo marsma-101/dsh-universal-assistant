@@ -1,4 +1,4 @@
-# dsh-agent-studio
+# dsh-universal-assistant
 
 给 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)（DSH）Web GUI 用的**自定义智能体设定台**。
 
@@ -21,7 +21,7 @@ DSH 自带的 preset 界面只做三件事：新建会话时选 preset、会话�
   动作是 `ctx.layout.selectPanel(null)`
 - **不显示、也不改动系统自带的四个模式**（标准 / PTC / 极简 / 创造）
 
-**给智能体用的工具**（`dsh-agent-studio/forge`）：
+**给智能体用的工具**（`dsh-universal-assistant/forge`）：
 
 - `agent_catalog` —— 看能挂哪些能力包、本机有哪些技能
 - `agent_list` —— 列出现有自定义智能体
@@ -56,9 +56,9 @@ DSH 自带的 preset 界面只做三件事：新建会话时选 preset、会话�
 
 ### 两种读取方式
 
-| | 装配时读（`!!js`，当前采用） | 每轮读（`dsh-agent-studio/persona`） |
+| | 装配时读（`!!js`，当前采用） | 每轮读（`dsh-universal-assistant/persona`） |
 |---|---|---|
-| 怎么接 | preset 的 `persona.prefix` 用 `!!js` 读文件 | 把 `persona` 行换成 `name: 'dsh-agent-studio/persona'`，并配 `dir` |
+| 怎么接 | preset 的 `persona.prefix` 用 `!!js` 读文件 | 把 `persona` 行换成 `name: 'dsh-universal-assistant/persona'`，并配 `dir` |
 | 改完 `.md` | 需要重启 profile | **下一步就生效** |
 | 额外依赖 | 无 | 需要本插件 |
 
@@ -81,7 +81,7 @@ node scripts/install.mjs --profile <name> --apply
 
 1. **校验本包** —— `dsh.bundle.patch` / `dsh.client.platform` 是否声明、客户端 bundle 是否**已构建**（缺失会失败）、bundle patch 是否是**恰好一条** plain insert、host 半是否导出 `apply()`。
 2. 在 `<DSH_HOME>/profiles/<profile>/node_modules/` 建一个 **junction** 指向本仓库（Windows 上不需要管理员权限）。
-3. 更新该 profile 的 `package.json`：加 `dependencies["dsh-agent-studio"] = "link:<本仓库>"`，并把包名追加进 `dsh.profile.bundles`。
+3. 更新该 profile 的 `package.json`：加 `dependencies["dsh-universal-assistant"] = "link:<本仓库>"`，并把包名追加进 `dsh.profile.bundles`。
 
 安装后**重载 Web GUI**；若侧边栏入口没出现，重启一次 profile。
 
@@ -91,9 +91,9 @@ node scripts/install.mjs --profile <name> --apply
 
 | 文件 | 角色 |
 |---|---|
-| `index.js` | Host 半：在 `ctx.webServer` 上注册 `/agent-studio-api` 前缀路由 |
+| `index.js` | Host 半：在 `ctx.webServer` 上注册 `/universal-assistant-api` 前缀路由 |
 | `lib/client.js` | Client 半：已构建的浏览器 bundle（`window.__ModuleLoader__` 工厂格式） |
-| `cordis.patch.yml` | 把 `agent-studio` 这一行插进 profile 的组合树 |
+| `cordis.patch.yml` | 把 `universal-assistant` 这一行插进 profile 的组合树 |
 
 **为什么用 HTTP 路由而不是 typert `@Remote`**：这是插件私有的 UI 桥，不需要跨插件契约、不需要生成 wire schema、不需要注册进 gateway。一条前缀路由是能跑通的最小实现，也让插件保持自包含。
 
@@ -108,11 +108,11 @@ node scripts/install.mjs --profile <name> --apply
 
 | 方法 | 路径 | 说明 |
 |---|---|---|
-| `GET` | `/agent-studio-api/agents` | 自定义智能体列表 |
-| `GET` | `/agent-studio-api/agent?id=<id>` | 单个智能体的文件、memory 目录、已挂能力 |
-| `POST` | `/agent-studio-api/agent` | 写入一个文档文件（`{id, file, content}`） |
-| `GET` | `/agent-studio-api/catalog` | 可挂的能力包 + 本机技能 |
-| `POST` | `/agent-studio-api/capabilities` | 按能力包重新生成组装（`{id, capabilities}`），校验失败自动回滚 |
+| `GET` | `/universal-assistant-api/agents` | 自定义智能体列表 |
+| `GET` | `/universal-assistant-api/agent?id=<id>` | 单个智能体的文件、memory 目录、已挂能力 |
+| `POST` | `/universal-assistant-api/agent` | 写入一个文档文件（`{id, file, content}`） |
+| `GET` | `/universal-assistant-api/catalog` | 可挂的能力包 + 本机技能 |
+| `POST` | `/universal-assistant-api/capabilities` | 按能力包重新生成组装（`{id, capabilities}`），校验失败自动回滚 |
 
 ## 关于样式
 

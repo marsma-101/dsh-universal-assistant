@@ -1,16 +1,16 @@
 /**
- * Install dsh-agent-studio into a DSH profile, offline.
+ * Install dsh-universal-assistant into a DSH profile, offline.
  *
  *   node scripts/install.mjs                  # read-only verification (profile: web)
  *   node scripts/install.mjs --apply          # perform the installation
  *   node scripts/install.mjs --profile <name> # target another profile
  *
  * Writes (apply only):
- *   <DSH_HOME>/profiles/<profile>/node_modules/dsh-agent-studio  (junction -> this repo)
+ *   <DSH_HOME>/profiles/<profile>/node_modules/dsh-universal-assistant  (junction -> this repo)
  *   <DSH_HOME>/profiles/<profile>/package.json                   (dependency + bundle entry)
  *
  * It never touches the profile's cordis.patch.yml: this package carries its own
- * bundle patch (`- insert:` of the `agent-studio` row), which the loader applies
+ * bundle patch (`- insert:` of the `universal-assistant` row), which the loader applies
  * as a layer.
  *
  * DSH_HOME defaults to ~/.dsh, which on this machine is a junction to the real
@@ -56,7 +56,7 @@ function check(label, ok, detail = '') {
 // ── the package itself ──────────────────────────────────────────────────────
 
 check('package directory exists', existsSync(PACKAGE_DIR), PACKAGE_DIR)
-check('package name', PACKAGE_NAME === 'dsh-agent-studio', PACKAGE_NAME)
+check('package name', PACKAGE_NAME === 'dsh-universal-assistant', PACKAGE_NAME)
 check('declares dsh.bundle.patch', manifest.dsh?.bundle?.patch === './cordis.patch.yml')
 check('declares a web client half', manifest.dsh?.client?.platform === 'web')
 check('main entry exists', existsSync(join(PACKAGE_DIR, manifest.main ?? 'index.js')))
@@ -93,7 +93,7 @@ check(
 )
 check(
   'bundle patch row names the package',
-  insertRows[0]?.name === PACKAGE_NAME && insertRows[0]?.id === 'agent-studio',
+  insertRows[0]?.name === PACKAGE_NAME && insertRows[0]?.id === 'universal-assistant',
   JSON.stringify(insertRows[0]),
 )
 
@@ -140,7 +140,7 @@ if (existed) {
 // 1b. The package needs its OWN node_modules anchor, because the profile links
 //     it as a junction. Node resolves a symlinked module by its REAL path, so a
 //     bare `import '@deepseek-ai/dsh-tools'` inside this package would walk up
-//     from `vendor/dsh-agent-studio/` — never reaching the profile's hoist
+//     from `vendor/dsh-universal-assistant/` — never reaching the profile's hoist
 //     directory — and fail with ERR_MODULE_NOT_FOUND. One junction inside the
 //     package fixes resolution for every dependency, present and future.
 const HOIST_DIR = existsSync(join(PROFILE_DIR, '..', 'node_modules'))

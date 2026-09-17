@@ -1,5 +1,5 @@
 {
-  "name": "dsh-agent-studio",
+  "name": "dsh-universal-assistant",
   "version": "0.6.0",
   "private": true,
   "description": "DSH web plugin: an Agent Studio for custom agent presets — a sidebar surface that lists, edits and creates your agents, a file-backed persona (SOUL / AGENT / USER / MEMORY read live on every prompt assembly), and model-facing tools that let an assistant build a new agent and prove it mounts.",
@@ -26,7 +26,7 @@
     "dsh-plugin",
     "deepseek-harness",
     "agent-preset",
-    "agent-studio"
+    "universal-assistant"
   ],
   "license": "Apache-2.0",
   "dsh": {
