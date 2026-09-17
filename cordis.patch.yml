@@ -1,0 +1,6 @@
+# Bundle patch for dsh-agent-studio: activates the plugin row that registers the
+# Agent Studio surface (sidebar entry + settings page). Plain insert only, so the
+# host can hot-mount this package.
+- insert:
+    - id: agent-studio
+      name: dsh-agent-studio
