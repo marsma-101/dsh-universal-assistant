@@ -1,20 +1,22 @@
 {
   "name": "dsh-agent-studio",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "private": true,
-  "description": "DSH web plugin: an Agent Studio surface for custom agent presets — a native sidebar entry that lists your custom agents and opens a settings page to edit SOUL / agent / memory / user files and their mounted tools and skills.",
+  "description": "DSH web plugin: an Agent Studio for custom agent presets — a sidebar surface that lists, edits and creates your agents, a file-backed persona (SOUL / AGENT / USER / MEMORY read live on every prompt assembly), and model-facing tools that let an assistant build a new agent and prove it mounts.",
   "type": "module",
   "main": "index.js",
   "exports": {
     ".": "./index.js",
     "./client": "./lib/client.js",
     "./persona": "./persona.js",
+    "./forge": "./forge.js",
     "./cordis.patch.yml": "./cordis.patch.yml",
     "./package.json": "./package.json"
   },
   "files": [
     "index.js",
     "persona.js",
+    "forge.js",
     "lib/client.js",
     "cordis.patch.yml",
     "README.md",

@@ -137,6 +137,29 @@ if (existed) {
   console.log(`linked ${LINK_PATH} -> ${PACKAGE_DIR}`)
 }
 
+// 1b. The package needs its OWN node_modules anchor, because the profile links
+//     it as a junction. Node resolves a symlinked module by its REAL path, so a
+//     bare `import '@deepseek-ai/dsh-tools'` inside this package would walk up
+//     from `vendor/dsh-agent-studio/` — never reaching the profile's hoist
+//     directory — and fail with ERR_MODULE_NOT_FOUND. One junction inside the
+//     package fixes resolution for every dependency, present and future.
+const HOIST_DIR = existsSync(join(PROFILE_DIR, '..', 'node_modules'))
+  ? join(PROFILE_DIR, '..', 'node_modules')
+  : join(PROFILE_DIR, 'node_modules')
+const SELF_MODULES = join(PACKAGE_DIR, 'node_modules')
+let selfExisted = false
+try {
+  selfExisted = lstatSync(SELF_MODULES).isDirectory() || lstatSync(SELF_MODULES).isSymbolicLink()
+} catch {
+  selfExisted = false
+}
+if (selfExisted) {
+  console.log(`package dependency anchor already present: ${SELF_MODULES}`)
+} else {
+  symlinkSync(HOIST_DIR, SELF_MODULES, 'junction')
+  console.log(`dependency anchor: ${SELF_MODULES} -> ${HOIST_DIR}`)
+}
+
 // 2. profile manifest: dependency (link:) + bundle layer.
 const after = structuredClone(before)
 after.dependencies = { ...(after.dependencies ?? {}), [PACKAGE_NAME]: `link:${PACKAGE_DIR}` }
