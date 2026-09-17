@@ -218,6 +218,12 @@ export const BUNDLES = {
   name: 'dsh-universal-assistant/forge'
 `,
 	},
+	bridge: {
+		summary: '和别的智能体说话（peer_list / peer_ask / peer_reset）—— 只有提问方需要挂',
+		yaml: `- id: agent-bridge
+  name: 'dsh-agent-bridge'
+`,
+	},
 }
 
 /** The bundle set a fresh, general-purpose assistant gets. */
