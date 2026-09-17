@@ -20,22 +20,23 @@ DSH 自带的 preset 界面只做三件事：新建会话时选 preset、会话�
 
 ## 安装
 
+本仓库自带**离线**安装脚本（不需要联网，不需要 `pnpm install`）：
+
 ```sh
-dsh plugin --profile <你的 profile> add link:<本仓库绝对路径>
+node scripts/install.mjs                      # 只读校验，不改动任何东西
+node scripts/install.mjs --apply              # 执行安装（默认 profile: web）
+node scripts/install.mjs --profile <name> --apply
 ```
 
-或者把本目录放进 `~/.dsh/vendor/`，然后在 profile 的 `package.json` 里：
+它做三件事：
 
-```json
-{
-  "dependencies": { "dsh-agent-studio": "link:<本仓库绝对路径>" },
-  "dsh": { "profile": { "bundles": [ "...", "dsh-agent-studio" ] } }
-}
-```
+1. **校验本包** —— `dsh.bundle.patch` / `dsh.client.platform` 是否声明、客户端 bundle 是否**已构建**（缺失会失败）、bundle patch 是否是**恰好一条** plain insert、host 半是否导出 `apply()`。
+2. 在 `<DSH_HOME>/profiles/<profile>/node_modules/` 建一个 **junction** 指向本仓库（Windows 上不需要管理员权限）。
+3. 更新该 profile 的 `package.json`：加 `dependencies["dsh-agent-studio"] = "link:<本仓库>"`，并把包名追加进 `dsh.profile.bundles`。
 
-本插件自带 `cordis.patch.yml`（`- insert:` 一行），所以只要它进了 `bundles`，组合行会自动插入。
+安装后**重载 Web GUI**；若侧边栏入口没出现，重启一次 profile。
 
-改完重载页面；若没生效，重启一次 profile。
+手动装也可以——把上面第 2、3 步自己做一遍即可。想卸载就删掉 junction、从 `package.json` 的两处移除该名字。
 
 ## 架构
 
