@@ -28,7 +28,7 @@
     "agent-preset",
     "agent-studio"
   ],
-  "license": "MIT",
+  "license": "Apache-2.0",
   "dsh": {
     "bundle": {
       "patch": "./cordis.patch.yml"

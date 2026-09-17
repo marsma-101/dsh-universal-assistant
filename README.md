@@ -4,25 +4,37 @@
 
 DSH 自带的 preset 界面只做三件事：新建会话时选 preset、会话标题显示当前 preset、设置里列出名单（复制 / 打开目录 / 删除）。它的 README 明确写着「**浏览器不编辑任何组装文本**」——也就是说，你没有地方去看和改一个智能体的人格文件、记忆文件、挂载了哪些工具与技能。
 
-这个插件补上这一块。
+这个插件补上这一块，并把「一个智能体」变成人能直接读写的文件。
 
 ## 它做什么
 
-- 在**左侧边栏**加一个原生入口「智能体设定」（展开时一行、收起时一个图标，两态由外壳接管）
-- 点开中间面板，列出本机**所有自定义智能体**（萧潇 + 以后新建的），显示工具行数、有无 SOUL
-- 面板标题**左侧**是 **「← 返回会话」**，与记忆系统同位置同款式：chevron 图标 + 文字，
-  栏变窄时文字隐藏只留箭头。动作是 `ctx.layout.selectPanel(null)`——布局契约里 `null` 即「显示会话」。- 点任意一张卡片，**弹出设定窗口**（注册在 `shell.overlay`），里面按标签页查看 / 编辑：
-  - `SOUL.md` / `USER.md` / `AGENT.md` / `MEMORY.md` —— **可编辑并保存**
+**界面**（左栏「智能体设定」）：
+
+- 在**左侧边栏**加一个原生入口（展开时一行、收起时一个图标，两态由外壳接管）
+- 列出本机**所有自定义智能体**，显示工具行数、有无 SOUL
+- 点卡片弹出设定窗，按标签页查看 / 编辑：
+  - `SOUL.md` / `USER.md` / `AGENT.md` / `MEMORY.md` —— **可编辑保存，改完下一轮对话就生效**
+  - `能力包` —— 勾选这个智能体要挂哪些工具能力（保存前会真的挂载一次，失败自动回滚）
   - `agent.cordis.yml` / `preset.yml` —— 只读
   - `记忆目录` —— `memory/` 下的文件列表
+- 标题**左侧**是「← 返回会话」，与记忆系统同位置同款式（chevron + 文字，栏窄时只留箭头），
+  动作是 `ctx.layout.selectPanel(null)`
 - **不显示、也不改动系统自带的四个模式**（标准 / PTC / 极简 / 创造）
+
+**给智能体用的工具**（`dsh-agent-studio/forge`）：
+
+- `agent_catalog` —— 看能挂哪些能力包、本机有哪些技能
+- `agent_list` —— 列出现有自定义智能体
+- `agent_create` —— **造一个新智能体**：写档案、生成组装，**并在工具内部跑挂载校验**，
+  不通过直接报错，不会留下一个坏 preset
+
+装上并把 `forge` 行挂给某个智能体，它就能给自己造同事了。
 
 ## 它不做什么
 
 - 不碰系统自带的四个 preset
 - 不改 DSH 自身的界面（不替换、不遮挡任何内置槽位）
-- **界面里暂不能编辑组装文件**（`agent.cordis.yml`）—— 写坏会让 preset 挂载失败，这一步要单独验证后再开
-- **暂不能创建智能体**（下一个版本）
+- 不提供 per-agent 私有技能目录（技能根是全局的，本机所有智能体本来就能加载所有技能）
 
 ## 智能体档案（文件模型）
 
@@ -88,16 +100,19 @@ node scripts/install.mjs --profile <name> --apply
 **Host 半** 复用 `ctx.agentPresets` 名单（它才知道 trust 与组装文件的绝对路径），因此：
 
 - 只列 `trust === 'user'` 的 preset —— 系统那四个天然被排除
-- 只允许写 `SOUL.md` / `USER.md` / `AGENT.md` / `MEMORY.md`
-- **不允许**从界面改 `agent.cordis.yml`：组装写坏会让 preset 挂载失败，这一步要单独验证后再开
+- 文档文件（`SOUL.md` / `USER.md` / `AGENT.md` / `MEMORY.md`）可编辑保存
+- 组装文件（`agent.cordis.yml`）**不直接编辑**，而是通过「能力包」勾选重新生成；
+  保存前会用 `standingKeyFor` 真的挂载一次，失败就把旧组装写回去
 
 ### 接口
 
 | 方法 | 路径 | 说明 |
 |---|---|---|
 | `GET` | `/agent-studio-api/agents` | 自定义智能体列表 |
-| `GET` | `/agent-studio-api/agent?id=<id>` | 单个智能体的文件内容与 memory 目录 |
+| `GET` | `/agent-studio-api/agent?id=<id>` | 单个智能体的文件、memory 目录、已挂能力 |
 | `POST` | `/agent-studio-api/agent` | 写入一个文档文件（`{id, file, content}`） |
+| `GET` | `/agent-studio-api/catalog` | 可挂的能力包 + 本机技能 |
+| `POST` | `/agent-studio-api/capabilities` | 按能力包重新生成组装（`{id, capabilities}`），校验失败自动回滚 |
 
 ## 关于样式
 
@@ -111,4 +126,4 @@ interface SidebarPanelIconOwnerProps { size: number; active: boolean }
 
 ## 许可
 
-MIT
+Apache-2.0
