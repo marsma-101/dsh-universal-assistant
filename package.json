@@ -1,6 +1,6 @@
 {
   "name": "dsh-agent-studio",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "description": "DSH web plugin: an Agent Studio surface for custom agent presets — a native sidebar entry that lists your custom agents and opens a settings page to edit SOUL / agent / memory / user files and their mounted tools and skills.",
   "type": "module",
