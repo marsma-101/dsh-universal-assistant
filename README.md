@@ -24,6 +24,37 @@ DSH 自带的 preset 界面只做三件事：新建会话时选 preset、会话�
 - **界面里暂不能编辑组装文件**（`agent.cordis.yml`）—— 写坏会让 preset 挂载失败，这一步要单独验证后再开
 - **暂不能创建智能体**（下一个版本）
 
+## 智能体档案（文件模型）
+
+一个自定义智能体 = 一个 preset 目录，里面是人能直接读写的文件：
+
+```
+.agent-presets/<id>/
+  agent.cordis.yml   组装（挂哪些行）
+  preset.yml         显示名 / 描述 / 排序
+  SOUL.md            是谁、怎么说话、底线
+  AGENT.md           职责与工具治理
+  USER.md            关于主子
+  MEMORY.md          积累的记忆
+```
+
+**这些文件是给智能体看的**，所以里面只写它需要知道的。不要写同步日期、来源、"从哪儿移植过来"这类给人看的维护信息——那会分散它的注意力，是提示词污染。
+
+四个 `.md` 按 `SOUL → AGENT → USER → MEMORY` 的顺序拼成人格，**缺哪个就跳过哪个**（新智能体可以只有一份 `SOUL.md`）。
+
+### 两种读取方式
+
+| | 装配时读（`!!js`，当前采用） | 每轮读（`dsh-agent-studio/persona`） |
+|---|---|---|
+| 怎么接 | preset 的 `persona.prefix` 用 `!!js` 读文件 | 把 `persona` 行换成 `name: 'dsh-agent-studio/persona'`，并配 `dir` |
+| 改完 `.md` | 需要重启 profile | **下一步就生效** |
+| 额外依赖 | 无 | 需要本插件 |
+
+本插件导出 `./persona` 供第二种方式使用：它注册的是**函数值**的 `deployment:persona-prefix` 段——`dsh-system-prompt` 每次装配都会重新求值，所以改了文件下一轮就是新的。
+
+> 切换成第二种需要**重启一次 profile**。Node 会缓存 `package.json` 的 `exports`，新加的子路径导出对已经在跑的进程不可见——没重启就切会报
+> `Package subpath './persona' is not defined by "exports"`。
+
 ## 安装
 
 本仓库自带**离线**安装脚本（不需要联网，不需要 `pnpm install`）：
